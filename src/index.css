@@ -1,0 +1,194 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Components use the Tailwind names below (bg-surface, text-muted...)
+ * and never raw colors, so light and dark mode both come from this one file.
+ *
+ * The look: square corners, hairline borders instead of shadows and filled cards,
+ * white or near-black pages, medium weight at most, one purple accent.
+ * "income" is only for income; "warning" is only for a budget running low; "danger"
+ * is only for overspending, negative values and destructive actions.
+ */
+:root {
+  color-scheme: light;
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --sidebar: #fafafa;
+  --ink: #272727;
+  --muted: #6b6b6b;
+  --line: #e3e3e3;
+  --control: #8f8f8f; /* borders of things you can interact with: 3:1 against the page */
+  --primary: #0d0d0d;
+  --on-primary: #ffffff;
+  --primary-soft: #f0f0f0;
+  --accent: #8a05ff;
+  --accent-soft: #f4f0ff;
+  --on-accent-soft: #6d04c9;
+  --focus: #0088e5;
+  --income: #006d4c;
+  --warning: #a35f0b;
+  --danger: #af1d27;
+  /* Chart shades, darkest for the biggest. All at least 3:1 against the page. */
+  --chart-1: #141414;
+  --chart-2: #4d4d4d;
+  --chart-3: #6b6b6b;
+  --chart-4: #8f8f8f;
+}
+
+/* Follows the system by default. Setting data-theme on <html> overrides it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --canvas: #0d0d0d;
+    --surface: #0d0d0d;
+    --sidebar: #141414;
+    --ink: #f0f0f0;
+    --muted: #c7c7c7;
+    --line: #333333;
+    --control: #6b6b6b;
+    --primary: #ffffff;
+    --on-primary: #000000;
+    --primary-soft: #262626;
+    --accent: #d1b8ff;
+    --accent-soft: #48008c;
+    --on-accent-soft: #f4f0ff;
+    --focus: #8ad6ff;
+    --income: #00db7c;
+    --warning: #e0a83e;
+    --danger: #f0989e;
+    --chart-1: #ffffff;
+    --chart-2: #c7c7c7;
+    --chart-3: #8f8f8f;
+    --chart-4: #6b6b6b;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --canvas: #0d0d0d;
+  --surface: #0d0d0d;
+  --sidebar: #141414;
+  --ink: #f0f0f0;
+  --muted: #c7c7c7;
+  --line: #333333;
+  --control: #6b6b6b;
+  --primary: #ffffff;
+  --on-primary: #000000;
+  --primary-soft: #262626;
+  --accent: #d1b8ff;
+  --accent-soft: #48008c;
+  --on-accent-soft: #f4f0ff;
+  --focus: #8ad6ff;
+  --income: #00db7c;
+  --warning: #e0a83e;
+  --danger: #f0989e;
+  --chart-1: #ffffff;
+  --chart-2: #c7c7c7;
+  --chart-3: #8f8f8f;
+  --chart-4: #6b6b6b;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sidebar: var(--sidebar);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-control: var(--control);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent-soft: var(--on-accent-soft);
+  --color-accent-hover: #8a05ff;
+  --color-income: var(--income);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --font-sans: 'Inter Tight Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Nothing in the app is heavier than medium. */
+  --font-weight-semibold: 500;
+  --font-weight-bold: 500;
+
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.1;
+  --text-display--font-weight: 500;
+
+  --radius-xs: 0;
+  --radius-card: 0;
+  --radius-control: 0;
+
+  --spacing-tap: 2.75rem; /* minimum 44px tap target: min-h-tap, min-w-tap */
+  --spacing-sidebar: 15rem;
+}
+
+/* The label above a section or a figure. */
+@utility section-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+@layer base {
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Below 16px, iOS Safari zooms the page when an input gets focus. */
+  input,
+  select,
+  textarea {
+    font-size: max(1rem, 16px);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* A subtle pop when a number changes. Restart it by changing the element's React key. */
+@keyframes number-updated {
+  from {
+    opacity: 0.4;
+    transform: translateY(4px);
+  }
+}
+
+.number-updated {
+  animation: number-updated 250ms ease-out;
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+/* While a sheet is open, its own toast host takes over from the app's. */
+body:has(dialog[open]) .app-toast {
+  display: none;
+}
+
+/* Chart labels use the same small mono type as dates. */
+.recharts-cartesian-axis-tick-value {
+  font-family: var(--font-mono);
+}
